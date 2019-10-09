@@ -1,22 +1,6 @@
-import React, { Component } from 'react'
-import PropTypes from 'prop-types'
+import Graphic from './components/graphic/Graphic'
+import GraphicsLayer from './components/layers/GraphicsLayer'
 
-import styles from './styles.css'
+export { Graphic, GraphicsLayer }
 
-export default class ExampleComponent extends Component {
-  static propTypes = {
-    text: PropTypes.string
-  }
-
-  render() {
-    const {
-      text
-    } = this.props
-
-    return (
-      <div className={styles.test}>
-        Example Component: {text}
-      </div>
-    )
-  }
-}
+export default { Graphic, GraphicsLayer }

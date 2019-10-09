@@ -57,5 +57,8 @@
   },
   "files": [
     "dist"
-  ]
+  ],
+  "dependencies": {
+    "esri-module-loader": "^2.0.2"
+  }
 }
