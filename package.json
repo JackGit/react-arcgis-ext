@@ -59,6 +59,7 @@
     "dist"
   ],
   "dependencies": {
+    "@esri/react-arcgis": "^4.0.0",
     "esri-module-loader": "^2.0.2"
   }
 }

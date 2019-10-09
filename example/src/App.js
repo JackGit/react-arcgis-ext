@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
-import { Map } from '@esri/react-arcgis'
-
-import { GraphicsLayer, Graphic } from 'react-arcgis-ext'
+// import { Map } from '@esri/react-arcgis'
+import { Map, GraphicsLayer, Graphic } from 'react-arcgis-ext'
 
 // example from https://developers.arcgis.com/javascript/latest/sample-code/sandbox/index.html?sample=intro-graphics
 
@@ -81,13 +80,8 @@ const POLYGON_GRAPHIC = {
 }
 
 export default class App extends Component {
-  state = {
-    map: null,
-    view: null
-  }
 
   render () {
-    const { map, view } = this.state
     const graphics = [POINT_GRAPHIC, POLYLINE_GRAPHIC, POLYGON_GRAPHIC]
     return (
       <div style={{width:'100vw',height:'100vh'}}>
@@ -99,13 +93,11 @@ export default class App extends Component {
             center: [-80, 35],
             zoom: 3
           }}
-          onLoad={(map, view) => this.setState({ map, view })}
+          onLoad={_ => console.log('loaded')}
         >
-          {map ?
-            <GraphicsLayer map={map} view={view}>
-              {graphics.map(g => <Graphic properties={g} />)}
-            </GraphicsLayer>
-          : null}
+          <GraphicsLayer>
+            {graphics.map(g => <Graphic properties={g} />)}
+          </GraphicsLayer>
         </Map>
       </div>
     )
