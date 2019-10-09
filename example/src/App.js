@@ -18,7 +18,8 @@ const POINT_GRAPHIC = {
       color: [255, 255, 255],
       width: 2
     }
-  }
+  },
+  attributes: { key: '00' }
 }
 
 const POLYLINE_GRAPHIC = {
@@ -32,6 +33,7 @@ const POLYLINE_GRAPHIC = {
     width: 4
   },
   attributes: {
+    key: '01',
     Name: "Keystone Pipeline",
     Owner: "TransCanada",
     Length: "3,456 km"
@@ -76,7 +78,8 @@ const POLYGON_GRAPHIC = {
       color: [255, 255, 255],
       width: 1
     }
-  }
+  },
+  attributes: { key: '02' }
 }
 
 export default class App extends Component {
