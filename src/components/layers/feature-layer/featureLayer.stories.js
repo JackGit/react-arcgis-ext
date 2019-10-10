@@ -1,6 +1,8 @@
 import React from 'react'
 import Map from '../../map/Map'
+import Graphic from '../../graphic/Graphic'
 import FeatureLayer from './FeatureLayer'
+import DrpCountyBoundaryData from '../../../../mock/drp-county-boundary'
 
 export default { title: 'FeatureLayer' }
 
@@ -26,6 +28,43 @@ export const introFeatureLayer = () => {
             url: 'https://services.arcgis.com/V6ZHFr6zdgNZuVG0/arcgis/rest/services/Landscape_Trees/FeatureServer/0'
           }}
         />
+      </Map>
+    </div>
+  )
+}
+
+export const createAFeatureLayerWithClientSideGraphics = () => {
+  Graphic.config({ keyAttribute: 'FID' })
+
+  const featureLayers = DrpCountyBoundaryData.featureCollection.layers.map(layer => {
+    return {
+      properties: {
+        objectIdField: 'FID'
+      },
+      features: layer.featureSet.features
+    }
+  })
+  console.log('featureLayers =>', featureLayers)
+
+  // view.goTo(sourceGraphics);
+
+  return (
+    <div style={{width:'100vw',height:'100vh'}}>
+      <Map
+        loaderOptions={{ version: "4.12" }}
+        mapProperties={{
+          basemap: 'dark-gray'
+        }}
+        viewProperties={{
+          center: [-41.647, 36.41],
+          zoom: 3
+        }}
+      >
+        {featureLayers.map(({ properties, features }) => 
+          <FeatureLayer properties={properties}>
+            {features.map(json => <Graphic json={json} />)}
+          </FeatureLayer>
+        )}
       </Map>
     </div>
   )

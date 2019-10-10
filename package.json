@@ -62,6 +62,7 @@
   ],
   "dependencies": {
     "@esri/react-arcgis": "^4.0.0",
-    "esri-module-loader": "^2.0.2"
+    "esri-loader": "^2.10.1",
+    "esri-module-loader": "^2.0.3"
   }
 }
