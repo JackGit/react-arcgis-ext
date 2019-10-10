@@ -1,6 +1,6 @@
 import Map from './components/map/Map'
 import Graphic from './components/graphic/Graphic'
-import GraphicsLayer from './components/layers/GraphicsLayer'
+import GraphicsLayer from './components/layers/graphics-layer/GraphicsLayer'
 
 import { MapConsumer, MapProvider } from './components/providers/MapProvider'
 

@@ -1,12 +1,12 @@
 import React from 'react'
 import Map from '../map/Map'
-import GraphicsLayer from '../layers/GraphicsLayer'
+import GraphicsLayer from '../layers/graphics-layer/GraphicsLayer'
 import Graphic from './Graphic'
 import { simplePointGraphic, simplePolylineGraphic, simplePolygonGraphic } from '../../../mock/graphics'
 
 export default { title: 'Graphic' }
 
-export const introduceGraphic = () => {
+export const introGraphic = () => {
   const graphics = [simplePointGraphic, simplePolylineGraphic, simplePolygonGraphic]
   return (
     <div style={{width:'100vw',height:'100vh'}}>

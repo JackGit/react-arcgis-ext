@@ -1,22 +1,24 @@
 import React, { Component, Children } from 'react'
 import PropTypes from 'prop-types'
 import { loadModules } from 'esri-module-loader'
-import Graphic from '../graphic/Graphic'
+import Graphic from '../../graphic/Graphic'
 
-const createLayer = properties => {
-  return loadModules(['esri/layers/GraphicsLayer']).then(({ GraphicsLayer }) => new GraphicsLayer(properties))
-}
-
-class GraphicsLayer extends Component {
+/**
+ * usage:
+ *  <FeatureLayer featureLayerProperties={}>
+ *    <Graphic />
+ *    <Graphic />
+ *  </FeatureLayer>
+ */
+class FeatureLayer extends Component {
 
   constructor (props) {
     super(props)
     this.state = {
-      layer: null,
+      layer: null, // need to put layer as state, so once layer is created, render would run again
       selectedKeys: [],
       editingKeys: []
     }
-    this.hoverKeys = []
   }
 
   static getDerivedStateFromProps (props, prevState) {
@@ -42,10 +44,14 @@ class GraphicsLayer extends Component {
   }
 
   componentDidMount () {
-    const { properties, map, onLoad } = this.props
-    createLayer(properties).then(layer => {
-      this.setState({ layer })
-      map.add(layer)
+    loadModules([
+      'FeatureLayer'
+    ]).then(({ FeatureLayer }) => {
+      const { properties, onLoad } = this.props
+      const layer = new FeatureLayer(properties)
+
+      this.addLayer(layer)
+      this.setState({ layer }) 
       this.bindEvents()
       onLoad && onLoad(layer)
     })
@@ -53,7 +59,7 @@ class GraphicsLayer extends Component {
 
   componentWillUnmount () {
     this.unbindEvents()
-    this.props.map.remove(this.state.layer)
+    this.removeLayer(this.state.layer)
   }
 
   shouldComponentUpdate (nextProps, nextState) {
@@ -73,7 +79,9 @@ class GraphicsLayer extends Component {
 
     // update graphicsLayer properties
     if (needSync('properties')) {
-      layer.set(properties)
+      // TODO properties should be considered as static props, set properties automatically would cause featureLayer issue
+      // like, source been reset, you need to apply adds again
+      // layer.set(properties)
     }
   }
 
@@ -120,6 +128,26 @@ class GraphicsLayer extends Component {
     }
   }
 
+  addLayer (layer) {
+    const { map, parentLayer } = this.props
+    if (parentLayer) {
+      console.log('FeatureLayer parentLayer.add(layer)')
+      parentLayer.add(layer)
+    } else {
+      console.log('FeatureLayer map.add(layer)')
+      map.add(layer)
+    }
+  }
+
+  removeLayer (layer) {
+    const { map, parentLayer } = this.props
+    if (parentLayer) {
+      parentLayer.remove(layer)
+    } else {
+      map.remove(layer)
+    }
+  }
+
   clickHandler = (hittedGraphics = [], event) => {
     const { onSelect } = this.props
     const selectedKeys = hittedGraphics.map(g => g.attributes.key)
@@ -147,8 +175,9 @@ class GraphicsLayer extends Component {
   render () {
     const { view, children = [], selectable, editable, hoverable } = this.props
     const { layer, editingKeys, selectedKeys } = this.state
-    
+
     if (layer) {
+      console.log('FeatureLayer render has layer', this)
       return Children.map(children, child => {
         const graphicKey = Graphic.key(child.props.properties || child.props.json)
         return React.cloneElement(child, {
@@ -166,14 +195,16 @@ class GraphicsLayer extends Component {
         })
       })
     } else {
+      console.log('FeatureLayer render null')
       return null
     }
   }
 }
 
-GraphicsLayer.propTypes = {
+FeatureLayer.propTypes = {
   map: PropTypes.object.isRequired,
   view: PropTypes.object.isRequired,
+  parentLayer: PropTypes.object,
   properties: PropTypes.object,
   onLoad: PropTypes.func,
   children: PropTypes.oneOfType([
@@ -194,7 +225,7 @@ GraphicsLayer.propTypes = {
   onEdit: PropTypes.func
 }
 
-GraphicsLayer.defaultProps = {
+FeatureLayer.defaultProps = {
   children: [],
   properties: null,
   selectable: true,
@@ -203,4 +234,4 @@ GraphicsLayer.defaultProps = {
   editable: true
 }
 
-export default GraphicsLayer
+export default FeatureLayer
