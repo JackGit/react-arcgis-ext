@@ -19,7 +19,8 @@
     "start": "rollup -c -w",
     "prepare": "npm run build",
     "predeploy": "cd example && npm install && npm run build",
-    "deploy": "gh-pages -d example/build"
+    "deploy": "gh-pages -d example/build",
+    "storybook": "start-storybook"
   },
   "peerDependencies": {
     "prop-types": "^15.5.4",
@@ -27,6 +28,7 @@
     "react-dom": "^15.0.0 || ^16.0.0"
   },
   "devDependencies": {
+    "@storybook/react": "^5.2.3",
     "@svgr/rollup": "^2.4.1",
     "babel-core": "^6.26.3",
     "babel-eslint": "^8.2.5",
