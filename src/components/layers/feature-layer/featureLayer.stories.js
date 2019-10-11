@@ -1,3 +1,5 @@
+import withExternalLinks from 'storybook-external-links'
+
 import React from 'react'
 import Map from '../../map/Map'
 import Graphic from '../../graphic/Graphic'
@@ -51,7 +53,6 @@ export const createAFeatureLayerWithClientSideGraphics = () => {
   return (
     <div style={{width:'100vw',height:'100vh'}}>
       <Map
-        loaderOptions={{ version: "4.12" }}
         mapProperties={{
           basemap: 'dark-gray'
         }}
@@ -68,4 +69,9 @@ export const createAFeatureLayerWithClientSideGraphics = () => {
       </Map>
     </div>
   )
+}
+
+const externalLinkDecorator = withExternalLinks('https://cdn.jsdelivr.net/npm/exif-js', { async: true })
+createAFeatureLayerWithClientSideGraphics.story = {
+  decorators: [storyFn => externalLinkDecorator(storyFn)]
 }
