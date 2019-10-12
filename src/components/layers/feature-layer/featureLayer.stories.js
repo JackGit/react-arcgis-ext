@@ -5,6 +5,7 @@ import Map from '../../map/Map'
 import Graphic from '../../graphic/Graphic'
 import FeatureLayer from './FeatureLayer'
 import DrpCountyBoundaryData from '../../../../mock/drp-county-boundary'
+import { fetchImageAsFeatures } from '../../../../mock/features'
 
 export default { title: 'FeatureLayer' }
 
