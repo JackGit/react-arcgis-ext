@@ -38,7 +38,12 @@ export const createAFeatureLayerWithClientSideGraphics = () => {
   Graphic.config({ keyAttribute: 'OBJECTID' })
 
   const featureLayerProperties = {
-    objectIdField: "OBJECTID",
+    // note: `source` and `geometryType` have to be set here, cause `source` will be applyEdits after when Graphic loaded
+    // and FeatureLayer couldn't create with source/geometryType both empty
+    source: [],
+    geometryType: 'point',
+
+    objectIdField: 'OBJECTID',
     fields: [
       { name: "OBJECTID", type: "oid" },
       { name: "url",      type: "string" }
