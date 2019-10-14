@@ -36,8 +36,9 @@ function exifToGraphic (url, id) {
 
         resolve({
           geometry: {
-            latitude: dmsDD(latitude, latitudeDirection),
-            longitude: dmsDD(longitude, longitudeDirection)
+            x: dmsDD(longitude, longitudeDirection),
+            y: dmsDD(latitude, latitudeDirection),
+            spatialReference: { wkid: 4326 }
           },
           attributes: {
             url: url,

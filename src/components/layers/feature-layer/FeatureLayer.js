@@ -177,7 +177,6 @@ class FeatureLayer extends Component {
     const { layer, editingKeys, selectedKeys } = this.state
 
     if (layer) {
-      console.log('FeatureLayer render has layer', this)
       return Children.map(children, child => {
         const graphicKey = Graphic.key(child.props.properties || child.props.json)
         return React.cloneElement(child, {
@@ -195,7 +194,6 @@ class FeatureLayer extends Component {
         })
       })
     } else {
-      console.log('FeatureLayer render null')
       return null
     }
   }

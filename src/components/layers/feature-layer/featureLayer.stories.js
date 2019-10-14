@@ -1,10 +1,8 @@
-import withExternalLinks from 'storybook-external-links'
-
 import React from 'react'
 import Map from '../../map/Map'
 import Graphic from '../../graphic/Graphic'
 import FeatureLayer from './FeatureLayer'
-import DrpCountyBoundaryData from '../../../../mock/drp-county-boundary'
+import DataLoader from '.storybook/components/DataLoader'
 import { fetchImageAsFeatures } from '../../../../mock/features'
 
 export default { title: 'FeatureLayer' }
@@ -37,42 +35,50 @@ export const introFeatureLayer = () => {
 }
 
 export const createAFeatureLayerWithClientSideGraphics = () => {
-  Graphic.config({ keyAttribute: 'FID' })
+  Graphic.config({ keyAttribute: 'OBJECTID' })
 
-  const featureLayers = DrpCountyBoundaryData.featureCollection.layers.map(layer => {
-    return {
-      properties: {
-        objectIdField: 'FID'
-      },
-      features: layer.featureSet.features
+  const featureLayerProperties = {
+    objectIdField: "OBJECTID",
+    fields: [
+      { name: "OBJECTID", type: "oid" },
+      { name: "url",      type: "string" }
+    ],
+    popupTemplate: {
+      content: "<img src='{url}'>"
+    },
+    renderer: {
+      type: "simple",
+      symbol: {
+        type: "text",
+        color: "#7A003C",
+        text: "\ue661",
+        font: {
+          size: 20,
+          family: "CalciteWebCoreIcons"
+        }
+      }
     }
-  })
-  console.log('featureLayers =>', featureLayers)
-
-  // view.goTo(sourceGraphics);
+  }
 
   return (
-    <div style={{width:'100vw',height:'100vh'}}>
-      <Map
-        mapProperties={{
-          basemap: 'dark-gray'
-        }}
-        viewProperties={{
-          center: [-41.647, 36.41],
-          zoom: 3
-        }}
-      >
-        {featureLayers.map(({ properties, features }) => 
-          <FeatureLayer properties={properties}>
-            {features.map(json => <Graphic json={json} />)}
-          </FeatureLayer>
-        )}
-      </Map>
-    </div>
+    <DataLoader load={fetchImageAsFeatures}>
+      {features =>
+        <div style={{width:'100vw',height:'100vh'}}>
+          <Map
+            mapProperties={{
+              basemap: 'dark-gray'
+            }}
+            viewProperties={{
+              center: [-41.647, 36.41],
+              zoom: 3
+            }}
+          >
+            <FeatureLayer properties={featureLayerProperties}>
+              {features.map(json => <Graphic json={json} />)}
+            </FeatureLayer>
+          </Map>
+        </div>
+      }
+    </DataLoader>
   )
-}
-
-const externalLinkDecorator = withExternalLinks('https://cdn.jsdelivr.net/npm/exif-js', { async: true })
-createAFeatureLayerWithClientSideGraphics.story = {
-  decorators: [storyFn => externalLinkDecorator(storyFn)]
 }
