@@ -1,3 +1,6 @@
+Trying to build a react component lib for Esri ArcGIS js API, by extending @esri/react-arcgis and providing many more react components.
+Check live demos here: [storybook](https://jackgit.github.io/react-arcgis-ext)
+
 # react-arcgis-ext
 
 > 
@@ -8,22 +11,6 @@
 
 ```bash
 npm install --save react-arcgis-ext
-```
-
-## Usage
-
-```jsx
-import React, { Component } from 'react'
-
-import MyComponent from 'react-arcgis-ext'
-
-class Example extends Component {
-  render () {
-    return (
-      <MyComponent />
-    )
-  }
-}
 ```
 
 ## License
