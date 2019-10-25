@@ -6,7 +6,8 @@ import FeatureLayer from './FeatureLayer'
 import DataLoader from '.storybook/components/DataLoader'
 import { fetchImageAsFeatures } from 'mock/features'
 
-import { WebMap } from '@esri/react-arcgis'
+import { WebMap, WebScene, Scene  } from '@esri/react-arcgis'
+import { transparentize } from '_polished@3.4.1@polished'
 
 
 export default { title: 'FeatureLayer' }
@@ -92,6 +93,65 @@ export const createAFeatureLayerWithClientSideGraphics = () => {
   )
 }
 
+export const highlightPointFeatures = () => {
+  let map, view, highlightSelect
+  const stations = ['Valmy', 'St-Jean Vieux Lyon', 'Charpennes', 'Sans souci', 'Hôtel de Ville', 'Garibaldi']
+  const btnStyle = {
+    width: 'auto',
+    display: 'table-cell',
+    margin: '4px',
+    backgroundColor: 'white',
+    color: '#0079c1'
+  }
+
+  const onClick = station => {
+    const stationLayer = map.layers.getItemAt(1)
+    view.whenLayerView(stationLayer).then(layerView => {
+      const queryStations = stationLayer.createQuery()
+      queryStations.where = `nom='${station}'`
+      stationLayer.queryFeatures(queryStations).then(result => {
+        if (highlightSelect) {
+          highlightSelect.remove()
+        }
+
+        const feature = result.features[0]
+        highlightSelect = layerView.highlight(feature.attributes['OBJECTID'])
+
+        view.goTo({ target: feature.geometry, tilt: 70 }, { duration: 2000, easing: 'in-out-expo' })
+      })
+    })
+  }
+
+  return (
+    <div style={{width:'100vw',height:'100vh'}}>
+      <WebScene
+        id='475a7161ed194460b5b52654e29581a2'
+        viewProperties={{
+          highlightOptions: {
+            color: [255, 241, 58],
+            fillOpacity: 0.4
+          },
+          environment: {
+            atmosphereEnabled: true,
+            atmosphere: { quality: 'high' }
+          }
+        }}
+        onLoad={(m, v) => {
+          map = m
+          view = v
+        }}
+      >
+
+      </WebScene>
+      <div class="esri-widget" style={{ position:'absolute',bottom:'40px',width:'100%',textAlign:'center',backgroundColor:'transparent',color:'white'}}>
+        <h3>Subway stations</h3>
+        {stations.map(s => 
+          <button key={s} class="esri-button" style={btnStyle} onClick={_ => onClick(s)}>{s}</button>
+        )}
+      </div>
+    </div>
+  )
+}
 
 export const addLabelsToAFeatureLayer = () => {
   const featureLayerProperties = {
