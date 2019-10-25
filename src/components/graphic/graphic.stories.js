@@ -1,8 +1,8 @@
 import React from 'react'
-import Map from '../map/Map'
-import GraphicsLayer from '../layers/graphics-layer/GraphicsLayer'
+import Map from '@/components/map/Map'
+import GraphicsLayer from '@/components/layers/graphics-layer/GraphicsLayer'
 import Graphic from './Graphic'
-import { simplePointGraphic, simplePolylineGraphic, simplePolygonGraphic } from '../../../mock/graphics'
+import { simplePointGraphic, simplePolylineGraphic, simplePolygonGraphic } from 'mock/graphics'
 
 export default { title: 'Graphic' }
 

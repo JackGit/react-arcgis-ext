@@ -1,10 +1,10 @@
 import React from 'react'
-import Map from '../../map/Map'
-import Graphic from '../../graphic/Graphic'
+import Map from '@/components/map/Map'
+import Graphic from '@/components/graphic/Graphic'
 import Search from '@/components/widgets/search/Search'
 import FeatureLayer from './FeatureLayer'
 import DataLoader from '.storybook/components/DataLoader'
-import { fetchImageAsFeatures } from '../../../../mock/features'
+import { fetchImageAsFeatures } from 'mock/features'
 
 import { WebMap } from '@esri/react-arcgis'
 
