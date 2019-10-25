@@ -1,6 +1,7 @@
 import React from 'react'
 import Map from '../../map/Map'
 import Graphic from '../../graphic/Graphic'
+import Search from '@/components/widgets/search/Search'
 import FeatureLayer from './FeatureLayer'
 import DataLoader from '.storybook/components/DataLoader'
 import { fetchImageAsFeatures } from '../../../../mock/features'
@@ -139,6 +140,7 @@ export const addLabelsToAFeatureLayer = () => {
         }}
       >
         <FeatureLayer properties={featureLayerProperties} />
+        <Search position="top-right" />
       </WebMap>
     </div>
   )
