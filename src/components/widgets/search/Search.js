@@ -1,41 +1,7 @@
-import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import { loadModules } from 'esri-module-loader'
+import { widgetHoc } from '../hoc'
 
-class Search extends Component {
-
-  widgetInstance = null
-
-  componentDidMount () {
-    loadModules([
-      'esri/widgets/Search'
-    ]).then(({ Search }) => {
-      const { view, properties = {} } = this.props
-      this.widgetInstance = new Search({ ...properties, view })
-      this.add()
-    })
-  }
-
-  componentWillUnmount () {
-    if (this.widgetInstance) {
-      this.remove()
-    }
-  }
-
-  add () {
-    const { view, position } = this.props
-    view.ui.add(this.widgetInstance, position)
-  }
-
-  remove () {
-    this.props.view.ui.remove(this.widgetInstance)
-    this.widgetInstance = null
-  }
-
-  render () {
-    return null
-  }
-}
+const Search = widgetHoc('esri/widgets/Search')
 
 Search.propTypes = {
   properties: PropTypes.object,

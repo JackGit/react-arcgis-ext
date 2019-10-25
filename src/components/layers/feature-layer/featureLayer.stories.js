@@ -1,6 +1,7 @@
 import React from 'react'
 import Map from '@/components/map/Map'
 import Graphic from '@/components/graphic/Graphic'
+import Widget from '@/components/widgets/widget/Widget'
 import Search from '@/components/widgets/search/Search'
 import Bookmarks from '@/components/widgets/bookmarks/Bookmarks'
 import FeatureLayer from './FeatureLayer'
@@ -439,6 +440,32 @@ export const addMultipleLabelClassesToALayer = () => {
         <FeatureLayer properties={featureLayerProperties} />
         <Bookmarks position="top-right" />
       </WebMap>
+    </div>
+  )
+}
+
+export const filterFeaturesByAttributes = () => {
+  const featureLayerProperties = {
+    portalItem: { id: "f9e348953b3848ec8b69964d5bceae02" },
+    outFields: ["SEASON"]
+  }
+  return (
+    <div style={{width:'100vw',height:'100vh'}}>
+      <Map
+        mapProperties={{ basemap: "gray-vector" }}
+        viewProperties={{
+          center: [-98, 40],
+          zoom: 4
+        }}
+      >
+        <FeatureLayer properties={featureLayerProperties} />
+        <Widget position="top-right">
+          <div class="esri-widget" style={{padding:'10px'}}>
+            <div style={{fontSize:'20pt',fontWeight:60,paddingBottom:'10px'}}>Flash Floods by Season</div>
+            <div>Flash Flood Warnings (2002 - 2012)</div>
+          </div>
+        </Widget>
+      </Map>
     </div>
   )
 }
