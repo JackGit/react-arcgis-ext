@@ -20,7 +20,9 @@
     "prepare": "npm run build",
     "predeploy": "cd example && npm install && npm run build",
     "deploy": "gh-pages -d example/build",
-    "storybook": "start-storybook"
+    "storybook": "start-storybook",
+    "deploy-storybook": "storybook-to-ghpages",
+    "build-storybook": "build-storybook -c .storybook -o docs"
   },
   "peerDependencies": {
     "prop-types": "^15.5.4",
@@ -29,6 +31,7 @@
   },
   "devDependencies": {
     "@storybook/react": "^5.2.3",
+    "@storybook/storybook-deployer": "^2.8.1",
     "@svgr/rollup": "^2.4.1",
     "babel-core": "^6.26.3",
     "babel-eslint": "^8.2.5",
