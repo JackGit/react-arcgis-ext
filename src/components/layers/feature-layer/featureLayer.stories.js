@@ -5,6 +5,9 @@ import FeatureLayer from './FeatureLayer'
 import DataLoader from '.storybook/components/DataLoader'
 import { fetchImageAsFeatures } from '../../../../mock/features'
 
+import { WebMap } from '@esri/react-arcgis'
+
+
 export default { title: 'FeatureLayer' }
 
 export const introFeatureLayer = () => {
@@ -85,5 +88,58 @@ export const createAFeatureLayerWithClientSideGraphics = () => {
         </div>
       }
     </DataLoader>
+  )
+}
+
+
+export const addLabelsToAFeatureLayer = () => {
+  const featureLayerProperties = {
+    portalItem: {
+      id: "6012738cd1c74582a5f98ea30ae9876f"
+    },
+    labelingInfo: [{
+      symbol: {
+        type: "text",
+        color: "green",
+        haloColor: "black",
+        font: {
+          family: "Playfair Display",
+          size: 12,
+          weight: "bold"
+        }
+      },
+      labelPlacement: "above-center",
+      labelExpressionInfo: {
+        expression: "$feature.MARKER_ACTIVITY"
+      }
+    }],
+    renderer: {
+      type: "simple", // autocasts as new SimpleRenderer()
+      symbol: {
+        type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
+        color: "rgba(0,100,0,0.6)",
+        size: 3,
+        outline: {
+          color: [0, 0, 0, 0.1],
+          width: 0.5
+        }
+      }
+    }
+  }
+  return (
+    <div style={{width:'100vw',height:'100vh'}}>
+      <WebMap
+        id="372b7caa8fe340b0a6300df93ef18a7e"
+        mapProperties={{
+
+        }}
+        viewProperties={{
+          center: [-116.925, 34.2501],
+          zoom: 14
+        }}
+      >
+        <FeatureLayer properties={featureLayerProperties} />
+      </WebMap>
+    </div>
   )
 }
