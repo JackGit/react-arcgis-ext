@@ -1,10 +1,12 @@
-import React from 'react'
+import React, { Component } from 'react'
 import Map from '@/components/map/Map'
 import Graphic from '@/components/graphic/Graphic'
 import Widget from '@/components/widgets/widget/Widget'
 import Search from '@/components/widgets/search/Search'
 import Bookmarks from '@/components/widgets/bookmarks/Bookmarks'
 import Expand from '@/components/widgets/expand/Expand'
+import Legend from '@/components/widgets/legend/Legend'
+import GraphicsLayer from '@/components/layers/graphics-layer/GraphicsLayer'
 import FeatureLayer from './FeatureLayer'
 import DataLoader from '.storybook/components/DataLoader'
 import { fetchImageAsFeatures } from 'mock/features'
@@ -512,3 +514,122 @@ export const filterFeaturesByAttributes = () => {
     </div>
   )
 }
+
+class BasicQueryingStory extends Component {
+  state = {
+    queryType: 'basic',
+    pointGraphic: {
+      attributes: { key: '1' },
+      symbol: {
+        type: "simple-marker",
+        color: [0, 0, 139],
+        outline: { color: [255, 255, 255], width: 1.5 }
+      }
+    }
+  }
+
+  map = null
+  view = null
+  featureLayer = null
+
+  onMapLoad = (map, view) => {
+    this.map = map
+    this.view = view
+
+    view.on('click', this.onClick)
+  }
+
+  onFeatureLayerLoad = featureLayer => {
+    this.view.extent = featureLayer.fullExtent
+    featureLayer.popupTemplate = featureLayer.createPopupTemplate()
+    this.featureLayer = featureLayer
+  }
+
+  onChange = e => {
+    this.setState({ queryType: e.target.value })
+  }
+
+  onClick = screenPoint => {
+    const { queryType, pointGraphic } = this.state
+    const { view } = this
+    const point = view.toMap(screenPoint)
+    const { distance, units } = ({
+      basic: { distance: null, units: null },
+      distance: { distance: 0.5, units: 'miles' }
+    })[queryType]
+
+    this.featureLayer.queryFeatures({
+      geometry: point,
+      distance,
+      units,
+      spatialRelationship: "intersects",
+      returnGeometry: false,
+      outFields: ["*"]
+    }).then(featureSet => {
+      this.setState({
+        pointGraphic: {
+          ...pointGraphic,
+          geometry: point
+        }
+      })
+
+      view.popup.open({
+        location: point,
+        features: featureSet.features,
+        featureMenuOpen: true
+      })
+    })
+  }
+
+  render () {
+    const { queryType, pointGraphic } = this.state
+    const featureLayerProperties = {
+      portalItem: { id: "234d2e3f6f554e0e84757662469c26d3" },
+      outFields: ["*"]
+    }
+    return (
+      <div style={{width:'100vw',height:'100vh'}}>
+        <Map
+          mapProperties={{ basemap: "gray" }}
+          viewProperties={{
+            popup: {
+              autoOpenEnabled: false,
+              dockEnabled: true,
+              dockOptions: {
+                buttonEnabled: false,
+                breakpoint: false,
+                position: "bottom-right"
+              }
+            }
+          }}
+          onLoad={this.onMapLoad}
+        >
+          <FeatureLayer properties={featureLayerProperties} onLoad={this.onFeatureLayerLoad} />
+          <GraphicsLayer>
+            <Graphic properties={pointGraphic} />
+          </GraphicsLayer>
+          <Legend position="bottom-left" />
+          <Widget position="top-right">
+            <div
+              class="esri-widget"
+              style={{
+                backgroundColor: 'white',
+                color: 'black',
+                padding: '6px',
+                maxWidth: '400px'
+              }}
+            >
+              <p>Select a query type and click a point on the map to view the results.</p>
+              <select class="esri-widget" onChange={this.onChange} value={queryType}>
+                <option value="basic">Basic Query</option>
+                <option value="distance">Query By Distance</option>
+              </select>
+            </div>
+          </Widget>
+        </Map>
+      </div>
+    )
+  }
+}
+
+export const basicQuerying = () => <BasicQueryingStory />

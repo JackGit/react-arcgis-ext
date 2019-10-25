@@ -53,7 +53,7 @@ class FeatureLayer extends Component {
       this.addLayer(layer)
       this.setState({ layer }) 
       this.bindEvents()
-      onLoad && onLoad(layer)
+      layer.load().then(_ => onLoad && onLoad(layer))
     })
   }
 
