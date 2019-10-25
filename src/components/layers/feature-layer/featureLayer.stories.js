@@ -4,6 +4,7 @@ import Graphic from '@/components/graphic/Graphic'
 import Widget from '@/components/widgets/widget/Widget'
 import Search from '@/components/widgets/search/Search'
 import Bookmarks from '@/components/widgets/bookmarks/Bookmarks'
+import Expand from '@/components/widgets/expand/Expand'
 import FeatureLayer from './FeatureLayer'
 import DataLoader from '.storybook/components/DataLoader'
 import { fetchImageAsFeatures } from 'mock/features'
@@ -445,10 +446,25 @@ export const addMultipleLabelClassesToALayer = () => {
 }
 
 export const filterFeaturesByAttributes = () => {
+  let map, view, layer
   const featureLayerProperties = {
     portalItem: { id: "f9e348953b3848ec8b69964d5bceae02" },
     outFields: ["SEASON"]
   }
+  const seasons = ['Winter', 'Spring', 'Summer', 'Fall']
+  const filterBySeason = season => {
+    view.whenLayerView(layer).then(floodLayerView => {
+      floodLayerView.filter = { where: `Season = '${season}'` }
+    })
+  }
+  const onExpand = expanded => {
+    view.whenLayerView(layer).then(floodLayerView => {
+      if (!expanded) {
+        floodLayerView.filter = null
+      }
+    })
+  }
+
   return (
     <div style={{width:'100vw',height:'100vh'}}>
       <Map
@@ -457,14 +473,41 @@ export const filterFeaturesByAttributes = () => {
           center: [-98, 40],
           zoom: 4
         }}
+        onLoad={(m, v) => {
+          map = m
+          view = v
+        }}
       >
-        <FeatureLayer properties={featureLayerProperties} />
+        <FeatureLayer properties={featureLayerProperties} onLoad={fl => layer = fl} />
         <Widget position="top-right">
           <div class="esri-widget" style={{padding:'10px'}}>
             <div style={{fontSize:'20pt',fontWeight:60,paddingBottom:'10px'}}>Flash Floods by Season</div>
             <div>Flash Flood Warnings (2002 - 2012)</div>
           </div>
         </Widget>
+        <Expand
+          properties={{
+            expandIconClass: "esri-icon-filter",
+            group: "top-left"
+          }}
+          position="top-left"
+          className="esri-widget"
+          onExpand={onExpand}
+        >
+          {seasons.map(season => 
+            <div
+              style={{
+                width: '100%',
+                padding: '12px',
+                textAlign: 'center',
+                verticalAlign: 'baseline',
+                cursor: 'pointer',
+                height: '40px'
+              }}
+              onClick={_ => filterBySeason(season)}
+            >{season}</div>
+          )}
+        </Expand>
       </Map>
     </div>
   )
