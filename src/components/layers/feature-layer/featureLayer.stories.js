@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { loadModules } from 'esri-module-loader'
 import Map from '@/components/map/Map'
 import Graphic from '@/components/graphic/Graphic'
 import Widget from '@/components/widgets/widget/Widget'
@@ -633,3 +634,138 @@ class BasicQueryingStory extends Component {
 }
 
 export const basicQuerying = () => <BasicQueryingStory />
+
+
+
+class CreatedFromAShapefileStory extends Component {
+  state = {
+    uploadStatus: '',
+    featureLayers: [] // { properties, graphics }
+  }
+  view = null
+
+  onFormChange = () => {
+    const fileName = event.target.value.toLowerCase()
+    if (fileName.indexOf(".zip") !== -1) {
+      this.generateFeatureCollection(fileName)
+    } else {
+      this.setState({ uploadStatus: 'Add shapefile as .zip file' })
+    }
+  }
+
+  generateFeatureCollection (fileName) {
+    let name = fileName.split(".")
+    name = name[0].replace("c:\\fakepath\\", "")
+    this.setState({ uploadStatus: 'Loading' })
+  
+    const params = {
+      name: name,
+      targetSR: this.view.spatialReference,
+      maxRecordCount: 1000,
+      enforceInputFileSizeLimit: true,
+      enforceOutputJsonSizeLimit: true
+    }
+
+    params.generalize = true
+    params.maxAllowableOffset = 10
+    params.reducePrecision = true
+    params.numberOfDigitsAfterDecimal = 0
+
+    const myContent = {
+      filetype: "shapefile",
+      publishParameters: JSON.stringify(params),
+      f: "json"
+    }
+
+    loadModules('esri/request').then(request => {
+      request("https://www.arcgis.com/sharing/rest/content/features/generate", {
+        query: myContent,
+        body: this.form,
+        responseType: "json"
+      }).then(response => {
+        const layerName = response.data.featureCollection.layers[0].layerDefinition.name
+        this.setState({ uploadStatus: 'Loaded: ' + layerName })
+        this.addShapefileToMap(response.data.featureCollection)
+      }).catch(error => {
+        this.setState({ uploadStatus: error.message })
+      })
+    })
+  }
+
+  addShapefileToMap (featureCollection) {
+    loadModules([
+      'esri/layers/support/Field', 'esri/Graphic'
+    ]).then(({ Field, Graphic }) => {
+      const sourceGraphics = []
+      const featureLayers = featureCollection.layers.map(layer => {
+        return {
+          properties: {
+            objectIdField: "FID",
+            source: [],
+            geometryType: 'polyline', // geometryType has to be set
+            fields: layer.layerDefinition.fields.map(field => Field.fromJSON(field))
+          },
+          graphics: layer.featureSet.features.map(f => {
+            sourceGraphics.push(Graphic.fromJSON(f))
+            return f
+          })
+        }
+      })
+  
+      this.setState({
+        uploadStatus: '',
+        featureLayers
+      })
+
+      this.view.goTo(sourceGraphics)
+    })
+  }
+
+  render () {
+    const { uploadStatus, featureLayers } = this.state
+    return (
+      <div style={{width:'100vw',height:'100vh'}}>
+        <Map
+          mapProperties={{ basemap: "dark-gray" }}
+          viewProperties={{
+            center: [-41.647, 36.41],
+            zoom: 3,
+            popup: { defaultPopupTemplateEnabled: true }
+          }}
+          onLoad={(m, v) => this.view = v}
+        >
+          {featureLayers.map((layer, i) =>
+            <FeatureLayer key={i} properties={layer.properties}>
+              {layer.graphics.map((g, i) =>
+                <Graphic key={i} json={g} />
+              )}
+            </FeatureLayer>
+          )}
+          <Expand properties={{ expandIconClass: "esri-icon-upload" }} position="top-right">
+            <div style={{padding:'0.5em',background:'#fff'}}>
+              <div>
+                <div style={{paddingLeft:'4px'}}>
+                  <p>Download shapefile from <a href="https://bsvensson.github.io/various-tests/shp/drp_county_boundary.zip">here.</a> </p>
+                  <p>Add a zipped shapefile to the map.</p>
+                  <p>Visit the <a target="_blank" href="https://doc.arcgis.com/en/arcgis-online/reference/shapefiles.htm">Shapefiles</a> help topic for information and limitations.</p>
+                  <form enctype="multipart/form-data" method="post" onChange={this.onFormChange} ref={c => this.form = c}>
+                    <div class="field">
+                      <label class="file-upload">
+                        <span><strong>Add File</strong></span>
+                        <input type="file" name="file" id="inFile" />
+                      </label>
+                    </div>
+                  </form>
+                  <span class="file-upload-status" style={{opacity:1}}>{uploadStatus}</span>
+                  <div id="fileInfo"></div>
+                </div>
+              </div>
+            </div>
+          </Expand>
+        </Map>
+      </div>
+    )
+  }
+}
+
+export const createdFromAShapefile = () => <CreatedFromAShapefileStory />
