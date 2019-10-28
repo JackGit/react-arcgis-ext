@@ -304,9 +304,8 @@ class WorkingWith3dMeshPrimitivesStory extends Component {
 export const workingWith3dMeshPrimitives = () => (
   <ModuleLoader
     modules={[
-      'esri/geometry/Point','esri/geometry/Extent','esri/geometry/SpatialReference',
-      'esri/geometry/Mesh','esri/geometry/support/meshUtils',
-      'esri/geometry/support/MeshComponent'
+      'esri/geometry/Point','esri/geometry/SpatialReference',
+      'esri/geometry/Mesh','esri/geometry/support/meshUtils'
     ]}
   >
     <ModulesConsumer>
@@ -492,8 +491,7 @@ export const lowPolyTerrainUsingMeshGeometry = () => (
   <ModuleLoader
     modules={[
       'esri/geometry/Point','esri/geometry/Extent','esri/geometry/SpatialReference',
-      'esri/geometry/Mesh','esri/geometry/support/meshUtils',
-      'esri/geometry/support/MeshComponent'
+      'esri/geometry/Mesh','esri/geometry/support/meshUtils'
     ]}
   >
     <ModulesConsumer>
