@@ -1,16 +1,18 @@
 import React, { Component } from 'react'
+import PropTypes from 'prop-types'
 import { loadModules } from 'esri-module-loader'
 
 export const widgetHoc = (widgetModulePath) => {
-  return class extends Component {
+  class WC extends Component {
   
     widgetInstance = null
   
     componentDidMount () {
       loadModules([{ name: 'Widget', path: widgetModulePath }]).then(({ Widget }) => {
-        const { view, properties = {} } = this.props
+        const { view, properties = {}, onLoad } = this.props
         this.widgetInstance = new Widget({ ...properties, view })
         this.add()
+        onLoad && onLoad(this.widgetInstance)
       })
     }
   
@@ -21,12 +23,21 @@ export const widgetHoc = (widgetModulePath) => {
     }
   
     add () {
-      const { view, position } = this.props
-      view.ui.add(this.widgetInstance, position)
+      const { view, position, add } = this.props
+      if (add) { // customized add function
+        add(this.widgetInstance, position)
+      } else {
+        view.ui.add(this.widgetInstance, position)
+      }
     }
   
     remove () {
-      this.props.view.ui.remove(this.widgetInstance)
+      const { view, remove } = this.props
+      if (remove) { // customized remove function
+        remove(this.widgetInstance)
+      } else {
+        view.ui.remove(this.widgetInstance)
+      }      
       this.widgetInstance = null
     }
   
@@ -34,4 +45,14 @@ export const widgetHoc = (widgetModulePath) => {
       return null
     }
   }
+
+  WC.propTypes = {
+    view: PropTypes.object,
+    properties: PropTypes.object,
+    add: PropTypes.func,
+    remove: PropTypes.func,
+    onLoad: PropTypes.func
+  }
+
+  return WC
 }

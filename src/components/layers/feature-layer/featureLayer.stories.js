@@ -148,10 +148,10 @@ export const highlightPointFeatures = () => {
       >
 
       </WebScene>
-      <div class="esri-widget" style={{ position:'absolute',bottom:'40px',width:'100%',textAlign:'center',backgroundColor:'transparent',color:'white'}}>
+      <div className="esri-widget" style={{ position:'absolute',bottom:'40px',width:'100%',textAlign:'center',backgroundColor:'transparent',color:'white'}}>
         <h3>Subway stations</h3>
         {stations.map(s => 
-          <button key={s} class="esri-button" style={btnStyle} onClick={_ => onClick(s)}>{s}</button>
+          <button key={s} className="esri-button" style={btnStyle} onClick={_ => onClick(s)}>{s}</button>
         )}
       </div>
     </div>
@@ -483,7 +483,7 @@ export const filterFeaturesByAttributes = () => {
       >
         <FeatureLayer properties={featureLayerProperties} onLoad={fl => layer = fl} />
         <Widget position="top-right">
-          <div class="esri-widget" style={{padding:'10px'}}>
+          <div className="esri-widget" style={{padding:'10px'}}>
             <div style={{fontSize:'20pt',fontWeight:60,paddingBottom:'10px'}}>Flash Floods by Season</div>
             <div>Flash Flood Warnings (2002 - 2012)</div>
           </div>
@@ -497,19 +497,22 @@ export const filterFeaturesByAttributes = () => {
           className="esri-widget"
           onExpand={onExpand}
         >
-          {seasons.map(season => 
-            <div
-              style={{
-                width: '100%',
-                padding: '12px',
-                textAlign: 'center',
-                verticalAlign: 'baseline',
-                cursor: 'pointer',
-                height: '40px'
-              }}
-              onClick={_ => filterBySeason(season)}
-            >{season}</div>
-          )}
+          <div style={{background:"#fff"}}>
+            {seasons.map((season, i) => 
+              <div
+                key={i}
+                style={{
+                  width: '100%',
+                  padding: '12px',
+                  textAlign: 'center',
+                  verticalAlign: 'baseline',
+                  cursor: 'pointer',
+                  height: '40px'
+                }}
+                onClick={_ => filterBySeason(season)}
+              >{season}</div>
+            )}
+          </div>
         </Expand>
       </Map>
     </div>
@@ -612,7 +615,7 @@ class BasicQueryingStory extends Component {
           <Legend position="bottom-left" />
           <Widget position="top-right">
             <div
-              class="esri-widget"
+              className="esri-widget"
               style={{
                 backgroundColor: 'white',
                 color: 'black',
@@ -621,7 +624,7 @@ class BasicQueryingStory extends Component {
               }}
             >
               <p>Select a query type and click a point on the map to view the results.</p>
-              <select class="esri-widget" onChange={this.onChange} value={queryType}>
+              <select className="esri-widget" onChange={this.onChange} value={queryType}>
                 <option value="basic">Basic Query</option>
                 <option value="distance">Query By Distance</option>
               </select>
@@ -749,14 +752,14 @@ class CreatedFromAShapefileStory extends Component {
                   <p>Add a zipped shapefile to the map.</p>
                   <p>Visit the <a target="_blank" href="https://doc.arcgis.com/en/arcgis-online/reference/shapefiles.htm">Shapefiles</a> help topic for information and limitations.</p>
                   <form enctype="multipart/form-data" method="post" onChange={this.onFormChange} ref={c => this.form = c}>
-                    <div class="field">
-                      <label class="file-upload">
+                    <div className="field">
+                      <label className="file-upload">
                         <span><strong>Add File</strong></span>
                         <input type="file" name="file" id="inFile" />
                       </label>
                     </div>
                   </form>
-                  <span class="file-upload-status" style={{opacity:1}}>{uploadStatus}</span>
+                  <span className="file-upload-status" style={{opacity:1}}>{uploadStatus}</span>
                   <div id="fileInfo"></div>
                 </div>
               </div>
