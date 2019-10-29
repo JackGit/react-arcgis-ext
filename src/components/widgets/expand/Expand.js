@@ -13,7 +13,7 @@ class Expand extends Component {
 
   componentDidMount () {
     loadModules(['esri/widgets/Expand']).then(({ Expand }) => {
-      const { view, properties = {}, onExpand, widgetContent } = this.props
+      const { view, properties = {}, onExpand, onLoad, widgetContent } = this.props
       const widgetInstance = new Expand({
         ...properties,
         content: widgetContent ? null : this.contentNode,
@@ -25,6 +25,7 @@ class Expand extends Component {
       
       this.add(widgetInstance)
       this.setState({ widgetInstance })
+      onLoad && onLoad(widgetInstance)
     })
   }
 
@@ -59,7 +60,10 @@ class Expand extends Component {
           view: props.view,
           add: () => {},
           remove: () => {},
-          onLoad: childWidgetInstance => this.setState({ childWidgetInstance })
+          onLoad: childWidgetInstance => {
+            this.setState({ childWidgetInstance })
+            child.props.onLoad && child.props.onLoad(childWidgetInstance)
+          }
         })
     } else {
       return <div ref={c => this.contentNode = c}>{children}</div>
@@ -71,6 +75,7 @@ Expand.propTypes = {
   properties: PropTypes.object,
   position: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
   onExpand: PropTypes.func,
+  onLoad: PropTypes.func,
   widgetContent: PropTypes.bool
 }
 

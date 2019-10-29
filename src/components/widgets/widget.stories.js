@@ -4,6 +4,7 @@ import BasemapGallery from './basemap-gallery/BasemapGallery'
 import Bookmarks from './bookmarks/Bookmarks'
 import LayerList from './layer-list/LayerList'
 import Expand from './expand/Expand'
+import Locate from './locate/Locate'
 
 export default { title: 'Widget' }
 
@@ -41,6 +42,48 @@ export const bookmarks = () => {
           <Bookmarks properties={{ editingEnabled: true }} />  
         </Expand>
       </WebMap>
+    </div>
+  )
+}
+
+export const locale = () => {
+  return (
+    <div style={{width:'100vw',height:'100vh'}}>
+      <Map
+        mapProperties={{ basemap: 'streets' }}
+        viewProperties={{
+          center: [-56.049, 38.485, 78],
+          zoom: 3
+        }}
+      >
+        <Locate position="top-left" />
+      </Map>
+    </div>
+  )
+}
+
+export const expand = () => {
+  let view, expand
+  const onBasemapGalleryLoad = basemapGallery => {
+    basemapGallery.watch("activeBasemap", () => {
+      const mobileSize = view.heightBreakpoint === "xsmall" || view.widthBreakpoint === "xsmall"
+      if (mobileSize) {
+        expand.collapse()
+      }
+    })
+  }
+  return (
+    <div style={{width:'100vw',height:'100vh'}}>
+      <Scene
+        mapProperties={{
+          basemap: "satellite"
+        }}
+        onLoad={(m, v) => view = v}
+      >
+        <Expand position="top-right" widgetContent onLoad={e => expand = e}>
+          <BasemapGallery onLoad={onBasemapGalleryLoad} />  
+        </Expand>
+      </Scene>
     </div>
   )
 }
