@@ -27,4 +27,5 @@ class SketchStory extends Component {
     )
   }
 }
+
 export const sketch = () => <SketchStory />
